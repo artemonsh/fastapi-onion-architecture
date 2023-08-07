@@ -1,12 +1,7 @@
-from repositories.tasks import TasksRepository
-from repositories.users import UsersRepository
-from services.tasks import TasksService
-from services.users import UsersService
+from typing import Annotated
 
+from fastapi import Depends
 
-def tasks_service():
-    return TasksService(TasksRepository)
+from utils.unitofwork import IUnitOfWork, UnitOfWork
 
-
-def users_service():
-    return UsersService(UsersRepository)
+UOWDep = Annotated[IUnitOfWork, Depends(UnitOfWork)]

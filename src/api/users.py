@@ -1,8 +1,6 @@
-from typing import Annotated
+from fastapi import APIRouter
 
-from fastapi import APIRouter, Depends
-
-from api.dependencies import users_service
+from api.dependencies import UOWDep
 from schemas.users import UserSchemaAdd
 from services.users import UsersService
 
@@ -15,15 +13,15 @@ router = APIRouter(
 @router.post("")
 async def add_user(
     user: UserSchemaAdd,
-    users_service: Annotated[UsersService, Depends(users_service)],
+    uow: UOWDep,
 ):
-    user_id = await users_service.add_user(user)
+    user_id = await UsersService().add_user(uow, user)
     return {"user_id": user_id}
 
 
 @router.get("")
 async def get_users(
-    users_service: Annotated[UsersService, Depends(users_service)],
+    uow: UOWDep,
 ):
-    users = await users_service.get_users()
+    users = await UsersService().get_users(uow)
     return users
