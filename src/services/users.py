@@ -4,9 +4,10 @@ from utils.unitofwork import IUnitOfWork
 
 class UsersService:
     async def add_user(self, uow: IUnitOfWork, user: UserSchemaAdd):
+        user_dict = user.model_dump()
         async with uow:
-            user_dict = user.model_dump()
             user_id = await uow.users.add_one(user_dict)
+            await uow.commit()
             return user_id
 
     async def get_users(self, uow: IUnitOfWork):

@@ -1,24 +1,28 @@
 from abc import ABC, abstractmethod
 from typing import Type
-from db.db import async_session_maker
-from sqlalchemy.ext.asyncio import AsyncSession
-from repositories.task_history import TaskHistoryRepository
 
+from db.db import async_session_maker
+from repositories.task_history import TaskHistoryRepository
 from repositories.tasks import TasksRepository
 from repositories.users import UsersRepository
 
 
+# https://github1s.com/cosmicpython/code/tree/chapter_06_uow
 class IUnitOfWork(ABC):
+    users: Type[UsersRepository]
     tasks: Type[TasksRepository]
     task_history: Type[TaskHistoryRepository]
-    users: Type[UsersRepository]
+    
+    @abstractmethod
+    def __init__(self):
+        ...
 
     @abstractmethod
     async def __aenter__(self):
         ...
 
     @abstractmethod
-    async def __aexit__(self):
+    async def __aexit__(self, *args):
         ...
 
     @abstractmethod
@@ -30,16 +34,15 @@ class IUnitOfWork(ABC):
         ...
 
 
-class UnitOfWork(IUnitOfWork):
-
+class UnitOfWork:
     def __init__(self):
         self.session_factory = async_session_maker
 
     async def __aenter__(self):
-        self.session: AsyncSession = self.session_factory()
-        
-        self.tasks = TasksRepository(self.session)
+        self.session = self.session_factory()
+
         self.users = UsersRepository(self.session)
+        self.tasks = TasksRepository(self.session)
         self.task_history = TaskHistoryRepository(self.session)
 
     async def __aexit__(self, *args):

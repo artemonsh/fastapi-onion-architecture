@@ -10,6 +10,22 @@ router = APIRouter(
 )
 
 
+@router.get("")
+async def get_tasks(
+    uow: UOWDep,
+):
+    tasks = await TasksService().get_tasks(uow)
+    return tasks
+
+
+@router.get("/history")
+async def get_task_history(
+    uow: UOWDep,
+):
+    tasks = await TasksService().get_task_history(uow)
+    return tasks
+
+
 @router.post("")
 async def add_task(
     task: TaskSchemaAdd,
@@ -25,20 +41,5 @@ async def edit_task(
     task: TaskSchemaEdit,
     uow: UOWDep,
 ):
-    task_id = await TasksService().edit_task(uow, id, task)
-    return {"task_id": task_id}
-
-
-@router.get("")
-async def get_tasks(
-    uow: UOWDep,
-):
-    tasks = await TasksService().get_tasks(uow)
-    return tasks
-
-@router.get("/history")
-async def get_task_history(
-    uow: UOWDep,
-):
-    tasks = await TasksService().get_tasks_history(uow)
-    return tasks
+    await TasksService().edit_task(uow, id, task)
+    return {"ok": True}

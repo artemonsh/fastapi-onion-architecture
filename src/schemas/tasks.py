@@ -20,13 +20,18 @@ class TaskSchemaAdd(BaseModel):
 
 
 class TaskSchemaEdit(BaseModel):
-    title: Optional[str]
-    author_id: Optional[int]
-    assignee_id: Optional[int]
+    author_id: int
+    assignee_id: int
 
 
 class TaskHistorySchema(BaseModel):
     id: int
+    task_id: int
+    previous_assignee_id: int
+    new_assignee_id: int
+
+
+class TaskHistorySchemaAdd(BaseModel):
     task_id: int
     previous_assignee_id: int
     new_assignee_id: int
