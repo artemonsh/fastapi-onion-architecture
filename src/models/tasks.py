@@ -9,7 +9,7 @@ class Tasks(Base):
     __tablename__ = "tasks"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[int]
+    title: Mapped[str]
     author_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     assignee_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
